@@ -1,6 +1,8 @@
 # This image provides a Python 2.7 environment you can use to run your Python
 # applications.
-FROM openshift/base-rhel7
+FROM openshift/base-centos7
+
+MAINTAINER SoftwareCollections.org <sclorg@redhat.com>
 
 EXPOSE 8080
 
@@ -10,26 +12,16 @@ ENV PYTHON_VERSION=2.7 \
 LABEL io.k8s.description="Platform for building and running Python 2.7 applications" \
       io.k8s.display-name="Python 2.7" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,python,python27,rh-python27" \
-      # Labels consumed by Red Hat build service.
-      BZComponent="python27-docker" \
-      Name="rhscl/python-27-rhel7" \
-      Version="2.7" \
-      Release="1" \
-      Architecture="x86_64"
+      io.openshift.tags="builder,python,python27,rh-python27"
 
-RUN yum-config-manager --enable rhel-server-rhscl-7-rpms && \
-    yum-config-manager --enable rhel-7-server-optional-rpms && \
-    yum-config-manager --enable rhel-7-server-ose-3.0-rpms && \
-    yum-config-manager --disable epel >/dev/null || : && \
-    INSTALL_PKGS="python27 python27-python-devel python27-python-setuptools python27-python-pip nss_wrapper httpd httpd-devel" && \
-    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+RUN yum install -y centos-release-scl && \
+    INSTALL_PKGS="libjpeg-turbo libjpeg-turbo-devel python27 python27-python-devel python27-python-setuptools python27-python-pip epel-release nss_wrapper httpd httpd-devel" && \
+    yum install -y --setopt=tsflags=nodocs --enablerepo=centosplus $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    # Remove redhat-logos (httpd dependency) to keep image size smaller.
-    rpm -e --nodeps redhat-logos && \
+    # Remove centos-logos (httpd dependency, ~20MB of graphics) to keep image
+    # size smaller.
+    rpm -e --nodeps centos-logos && \
     yum clean all -y
-
-RUN yum install -y npm nodejs nodejs-devel nss_wrapper mod_wsgi --enablerepo=epel
 
 # Copy the S2I scripts from the specific language image to $STI_SCRIPTS_PATH.
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
