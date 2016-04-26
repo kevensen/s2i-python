@@ -32,7 +32,7 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms && \
     #yum clean all -y
 
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    yum install -y npm nodejs nodejs-devel nodejs-less nss_wrapper mod_wsgi geos --enablerepo=epel && \
+    yum install -y npm nodejs nodejs-devel nodejs-less nss_wrapper mod_wsgi geos gdal gdal-libs gdal-devel --enablerepo=epel && \
     yum clean all -y
 
 # Copy the S2I scripts from the specific language image to $STI_SCRIPTS_PATH.
