@@ -50,5 +50,10 @@ RUN chown -R 1001:0 /opt/app-root && chmod -R og+rwx /opt/app-root
 
 USER 1001
 
+RUN mkdir -p /var/www/html/static && \
+    chmod 755 /var/www/html && \
+    chmod 755 /var/www/html/static && \
+    chown 1001 /var/www/html/static
+
 # Set the default CMD to print the usage of the language image.
 CMD $STI_SCRIPTS_PATH/usage
