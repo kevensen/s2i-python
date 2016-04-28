@@ -28,13 +28,15 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms && \
     rpm -V $INSTALL_PKGS && \
     # Remove redhat-logos (httpd dependency) to keep image size smaller.
     #rpm -e --nodeps redhat-logos && \
-    rpm -e --nodeps redhat-logos
-    #yum clean all -y
+    rpm -e --nodeps redhat-logos && \
+    yum clean all -y && \
+    rm -rf /var/cache/yum/*
 
 RUN yum clean all && \
     yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum install -y npm nodejs nodejs-devel nodejs-less nss_wrapper mod_wsgi geos gdal gdal-libs gdal-devel --enablerepo=epel && \
-    yum clean all -y
+    yum clean all -y && \
+    rm -rf /var/cache/yum/*
 
 # Copy the S2I scripts from the specific language image to $STI_SCRIPTS_PATH.
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
